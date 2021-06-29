@@ -1,0 +1,53 @@
+# -*- coding: utf-8 -*-
+import os
+import random
+import matplotlib.pyplot as plt
+import pandas as pd
+from sklearn.preprocessing import StandardScaler 
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import MaxAbsScaler
+
+result=[]
+
+def search(dirname):
+    try:
+        filenames = os.listdir(dirname)
+        for filename in filenames:
+            full_filename = os.path.join(dirname, filename)
+            if os.path.isdir(full_filename):
+                search(full_filename)
+            else:
+                ext = os.path.splitext(full_filename)[-1]
+                if ext == '.csv': 
+                    # print(full_filename)
+                    result.append(full_filename)
+    except PermissionError:
+        pass
+
+search('./floders/') # ./floders/아래 하위폴더 모두 읽기
+
+GetRandom = random.randint(0,len(result)-1)
+print(result[GetRandom])
+
+f = str(result[GetRandom]) # f => ex) ./floders/SB\MUSE_20180114_121206_37000.csv
+f_adress = f.replace('/',' ').replace('\\',' ').split() 
+f_title = f_adress[2] # split으로 Rhythm 이름 구분
+
+data_f = pd.read_csv(f,header=None)
+fig = plt.figure(figsize=(15,8))
+
+scaler1 = StandardScaler()   # 표준화 
+scaler1_ = scaler1.fit_transform(data_f)
+scaler2 = MinMaxScaler()     # 최대-최소 정규화
+scaler2_ = scaler2.fit_transform(data_f)
+scaler3 = MaxAbsScaler()     # 절대값 0으로 기준
+scaler3_ = scaler3.fit_transform(data_f)
+
+for i in range(12):
+    x = range(0,5000)
+    y= data_f.iloc[:,i]
+    p = fig.add_subplot(4,3,i+1)
+    p.plot(x,y) 
+    fig.tight_layout() # 간격 
+    p.set_title(f_title) 
+    p.set_xlim([0,1000])
