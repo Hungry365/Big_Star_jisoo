@@ -1,0 +1,27 @@
+# -*- coding: utf-8 -*-
+import pandas as pd
+import csv
+import shutil
+
+df_D = pd.read_excel('./files/Diagnostics.xlsx')
+
+print('Rhythm ==> ', end ="")
+Rt = input();
+
+is_Rt=df_D['Rhythm']==str(Rt)
+Rt_df = df_D[is_Rt]
+Rt_ecgData=Rt_df[['FileName']]
+
+print(Rt_ecgData.values) # 파일이름
+print(len(Rt_ecgData)) #파일 개수
+      
+for i in range (len(Rt_ecgData)):
+    if str(Rt) == "SA":
+        from_='./ECGDataDenoised/'+Rt_ecgData.values[i][0]+'.csv'
+        to_='./SI'
+    else:
+        from_='./ECGDataDenoised/'+Rt_ecgData.values[i][0]+'.csv'
+        to_ = './'+str(Rt)    
+    shutil.copy(from_,to_)
+    
+print('Copy complete')
